@@ -10,6 +10,20 @@ Basic video playback controls let you view all available cameras side-by-side.  
 
 Installation packages are available on the [Releases](https://github.com/BobStrogg/teslacam-browser/releases) page.
 
+## Docker Installation
+
+Pull and run the teslacam-browser Docker container:
+
+```
+docker pull BobStrogg/teslacam-browser
+
+docker run -ti --rm \
+ --net=host \
+ -v /Path/to/TeslaCam/:/media \
+ -p 8088:8088 \
+  BobStrogg/teslacam-browser
+```
+
 ## Running from the command line
 
 While using the installation packages is the simplest option, you can also run the app from the command line (you'll need to ensure [Electron](https://electronjs.org/docs/tutorial/installation) is installed first).
