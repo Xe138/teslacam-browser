@@ -1,3 +1,7 @@
+let timeStartOffsetAmt = 0;
+let chrome_hw25_timespan_hack = true;
+if (chrome_hw25_timespan_hack)
+	timeStartOffsetAmt = 0.3;
 ( function ( root, factory )
 {
 	if ( typeof define === 'function' && define.amd ) define( [], factory );
@@ -17,7 +21,7 @@
                 args: args,
                 showSidebar: true,
                 showFolders: false,
-                combineClips: true,
+                combineClips: chrome_hw25_timespan_hack? false : true,
                 parsedPath: null,
                 selectedFolder: null,
                 selectedDate: new Date(),
@@ -77,7 +81,7 @@
                             scrub: 0,
                             playing: false,
                             visible: false,
-                            currentTime: 0,
+                            currentTime: timeStartOffsetAmt,
                             duration: null,
                             ended: false,
                             loaded: false,
@@ -122,7 +126,7 @@
 
                             this.controls.timespan = timespan
 
-                            timespan.currentTime = 0
+                            timespan.currentTime = timeStartOffsetAmt
                             timespan.ended = false
                             timespan.playing = true
                             timespan.visible = true
@@ -130,7 +134,7 @@
                             if ( oldTimespan )
                             {
                                 oldTimespan.ended = false
-                                oldTimespan.currentTime = 0
+                                oldTimespan.currentTime = timeStartOffsetAmt
                                 oldTimespan.visible = false
                             }
                         }
@@ -257,8 +261,11 @@
                     }
 
                     if ( this.controls ) this.controls.timespan = timespan
-
-                    timespan.visible |= ( timespan.playing = !timespan.playing )
+                    if (! timespan.playing && chrome_hw25_timespan_hack){
+                    	timespan.visible=true;
+                    	setTimeout( () => {timespan.visible |= ( timespan.playing = !timespan.playing );}, 500);
+                    }else
+                    	timespan.visible |= ( timespan.playing = !timespan.playing )
                 },
                 scrubInput: function( timespan )
                 {
@@ -438,7 +445,7 @@
                 }
             },
             template:
-                `<video ref="video" class="video" :class="view.camera" :src="view.file" :autoplay="timespan.playing" :playbackRate.prop="playbackRate" crossorigin="anonymous" @durationchange="durationChanged" @timeupdate="timeChanged" @ended="ended" title="Open in file explorer" @click="openExternal" @canplaythrough="loaded" playsinline></video>`,
+                `<video ref="video" class="video" :class="view.camera" :src="view.file" :autoplay="timespan.playing" :playbackRate.prop="playbackRate" crossorigin="anonymous" @loadedmetadata="loadedMetadata" @durationchange="durationChanged" @timeupdate="timeChanged" @ended="ended" title="Open in file explorer" @click="openExternal" @canplaythrough="loaded" playsinline></video>`,
             watch:
             {
                 "timespan.playing":
@@ -467,7 +474,7 @@
                                             this.timeout = null
 
                                             video.style.opacity = 1.0
-                                            video.currentTime = 0.0
+                                            video.currentTime = timeStartOffsetAmt
                                             video.play().catch( e => { this.error = e.message; console.error( e.message ); } )
                                         },
                                         delay * 1000 )
@@ -547,6 +554,15 @@
                 openExternal: function()
                 {
                     handlers.openExternal( this.view.file )
+                },
+                ident: function(){
+                	return this.$el.currentSrc.substr(-30);
+                },
+                loadedMetadata: function( event )
+                {
+                	var video = event.target;
+                	if (chrome_hw25_timespan_hack)
+                		video.currentTime=timeStartOffsetAmt;
                 }
             }
         } )
