@@ -70,7 +70,7 @@ if (chrome_hw25_timespan_hack)
                 {
                     function makeTimespan( key, value )
                     {
-                        var viewOrder = [ "left_repeater", "front", "right_repeater" ]
+                        var viewOrder = [ "left_repeater", "front", "back", "right_repeater" ]
                         var views = Array.from( value )
 
                         views.sort( ( v1, v2 ) => viewOrder.indexOf( v1.camera ) - viewOrder.indexOf( v2.camera ) )

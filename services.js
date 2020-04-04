@@ -102,7 +102,7 @@
 	{
 		if ( !folder ) folder = lastArgs.folder
 
-		var specialFolders = [ "TeslaCam", "SavedClips", "RecentClips" ]
+		var specialFolders = [ "TeslaCam", "SavedClips", "RecentClips", "SentryClips", "TeslaSentry" ]
 		var folderInfos = []
 
 		function addSubfolders( baseFolder )
@@ -158,7 +158,7 @@
 					}
 				}
 			}
-			catch
+			catch (e)
 			{
 			}
 		}
@@ -189,7 +189,7 @@
 			{
 				return fs.lstatSync( p ).isDirectory()
 			}
-			catch
+			catch (e)
 			{
 				return false
 			}
@@ -203,7 +203,7 @@
 				.map( f => { return { path: path.join( folder, f ), name: f } } )
 				.filter( f => isDirectory( f.path ) )
 		}
-		catch
+		catch (e)
 		{
 		}
 
